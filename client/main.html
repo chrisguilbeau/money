@@ -1,0 +1,46 @@
+<head>
+  <title>Money</title>
+  <meta name="viewport" content="width=200, user-scalable=no">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+</head>
+
+<body>
+  {{> main}}
+  <hr>
+  {{loginButtons}}
+</body>
+
+<template name="main">
+	{{#if authenticated}}
+      <span>{{daysLeftInPeriod}} days left in period</span>
+      <hr>
+      <div class="progress-out">
+        <div class="progress-in" style="width:{{percentPeriodElapsed}}%;"></div>
+      </div>
+      <hr>
+  		{{#each categories}}
+  			{{#if isAdminMode}}
+	  			<button class="delete" dbid="{{_id}}" >x</button>
+	  		{{/if}}
+  			<input type="text" pattern="[0-9]*" dbid="{{_id}}" placeholder="{{name}} ${{catTotal _id}}" />
+  			{{#if isAdminMode}}
+	  			<button class="add" dbid="{{_id}}" >+</button>
+	  		{{/if}}
+  			<button class="spend" dbid="{{_id}}" >$</button>
+        <div class="progress-out"><div class="progress-in" style="width:{{percentSpent _id}}%;"></div></div>
+  			<hr>
+  		{{/each}}
+		  {{#if isAdminMode}}
+	  		<input type="text" id="new_category" placeholder="New Category" />
+  			<button id="add_new_category">Add</button>
+  			<hr>
+  		{{/if}}
+  		<input type="checkbox" id="toggle_admin" {{#if isAdminMode}}checked="checked"{{/if}} />
+  		<label>Admin Mode</label>
+      <table id="txns"><tbody>
+      {{#each transactions}}
+        <tr><td>{{formatTime timestamp}}</td><td>{{getCategory catId}}</td><td class="right">$</td><td class="right">{{amount}}</td></tr>
+      {{/each}}
+      </tbody></table>
+  {{/if}}
+</template>

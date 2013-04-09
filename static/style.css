@@ -1,0 +1,32 @@
+hr{
+	border: none;
+}
+
+.progress-out{
+	border: 0.1em solid dimgrey;
+	background-color: lightgrey;
+	border-radius: 0.4em;
+	overflow: hidden;
+}
+
+.progress-in{
+	background-color: dimgrey;
+	height:0.5em;
+}
+
+table{
+	border-collapse: collapse;
+	width: 100%;
+}
+
+table#txns td{
+	padding-right: 0.5em;
+	padding-left: 0.5em;
+}
+
+table#txns tr:nth-child(odd) {background: #CCC}
+
+table#txns tr > td.right {
+	text-align: right;
+	width: 1%;
+}
