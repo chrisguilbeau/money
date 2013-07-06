@@ -5,11 +5,10 @@ Session.setDefault('isAdminMode', false);
 
 // Some helper functions
 function getUserId(){
-  userId = 'TEMP_FIX';
-  // # FIXME
-  // var userId = Meteor.user()._id;
-  // console.log(userId);
-  return userId;
+  // userId = 'TEMP_FIX';
+  var user = Meteor.user();
+  if (user)
+    return user._id;
 }
 
 function now(){
@@ -110,9 +109,10 @@ Template.main.daysLeftInPeriod = function() {
 }
 
 Template.main.authenticated = function () {
-  return true;
-  if (Meteor.user()) return true;
-  else return false;
+  if (Meteor.user())
+    return true;
+  else
+    return false;
 };
 
 Template.main.isAdminMode = function() {
