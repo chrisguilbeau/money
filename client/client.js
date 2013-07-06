@@ -2,10 +2,12 @@ Categories = new Meteor.Collection("categories");
 Transactions = new Meteor.Collection("transactions");
 
 Session.setDefault('isAdminMode', false);
+var deving = false;
+
 
 // Some helper functions
 function getUserId(){
-  // userId = 'TEMP_FIX';
+  if (deving) return "TEMP_FIX";
   var user = Meteor.user();
   if (user)
     return user._id;
@@ -94,13 +96,22 @@ Template.main.percentSpent = function(catId) {
     );
   var totalPositive = balanceAtStart + depositsSinceStart;
   if (totalPositive == 0)
-    return 0
+    return 100
   else
-    return Math.round((Math.abs(withdrawalsSinceStart) / totalPositive) * 100);
+    return 100 - Math.round((Math.abs(withdrawalsSinceStart) / totalPositive) * 100);
 }
 
 Template.main.percentPeriodElapsed = function() {
   return percentPeriodElapsed(2);
+}
+
+Template.main.totalLeftForPeriod = function() {
+  var total = 0;
+  Transactions.find({userId: getUserId()}, "amount").forEach(
+    function(txn){
+      total += parseFloat(txn.amount);
+    });
+  return total;
 }
 
 Template.main.daysLeftInPeriod = function() {
@@ -109,6 +120,7 @@ Template.main.daysLeftInPeriod = function() {
 }
 
 Template.main.authenticated = function () {
+  if (deving) return true;
   if (Meteor.user())
     return true;
   else

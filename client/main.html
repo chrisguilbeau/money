@@ -12,22 +12,34 @@
 
 <template name="main">
 	{{#if authenticated}}
-      <span>{{daysLeftInPeriod}} days left in period</span>
       <hr>
       <div class="progress-out">
         <div class="progress-in" style="width:{{percentPeriodElapsed}}%;"></div>
+        <div class="daysLeftInPeriod">
+          <span>{{daysLeftInPeriod}} days left, ${{totalLeftForPeriod}} to spend</span>
+        </div>
       </div>
       <hr>
   		{{#each categories}}
-  			{{#if isAdminMode}}
-	  			<button class="delete" dbid="{{_id}}" >x</button>
-	  		{{/if}}
-  			<input type="text" pattern="[0-9]*" dbid="{{_id}}" placeholder="{{name}} ${{catTotal _id}}" />
-  			{{#if isAdminMode}}
-	  			<button class="add" dbid="{{_id}}" >+</button>
-	  		{{/if}}
-  			<button class="spend" dbid="{{_id}}" >$</button>
-        <div class="progress-out"><div class="progress-in" style="width:{{percentSpent _id}}%;"></div></div>
+        <div class="progress-out">
+          <div class="progress-in" style="width:{{percentSpent _id}}%;"></div>
+          {{#if isAdminMode}}
+            <div class="cell tight">
+              <button class="delete" dbid="{{_id}}" >x</button>
+            </div>
+          {{/if}}
+            <div class="cell">
+              <input type="text" pattern="[0-9]*" dbid="{{_id}}" placeholder="{{name}} ${{catTotal _id}}" />
+            </div>
+          {{#if isAdminMode}}
+            <div class="cell tight">
+              <button class="add" dbid="{{_id}}" >+</button>
+            </div>
+          {{/if}}
+          <div class="cell tight">
+            <button class="spend" dbid="{{_id}}" >$</button>
+          </div>
+        </div>
   			<hr>
   		{{/each}}
 		  {{#if isAdminMode}}
