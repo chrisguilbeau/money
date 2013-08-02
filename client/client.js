@@ -1,9 +1,10 @@
-Categories = new Meteor.Collection("categories");
-Transactions = new Meteor.Collection("transactions");
+// subscriptions
+Meteor.subscribe("categories");
+Meteor.subscribe("transactions");
 
 Session.setDefault('isAdminMode', false);
 var deving = false;
-
+deving = true;
 
 // Some helper functions
 function getUserId(){
@@ -79,7 +80,7 @@ Template.main.percentSpent = function(catId) {
   var balanceAtStart = 0;
   var depositsSinceStart = 0;
   var withdrawalsSinceStart = 0;
-  var params = {userId: getUserId(), catId: catId};
+  var params = {catId: catId};
   Transactions.find(params, {timestamp: {$ltw: socp}}).forEach(
     function(txn){
       balanceAtStart += parseFloat(txn.amount);
@@ -107,7 +108,7 @@ Template.main.percentPeriodElapsed = function() {
 
 Template.main.totalLeftForPeriod = function() {
   var total = 0;
-  Transactions.find({userId: getUserId()}, "amount").forEach(
+  Transactions.find({}, "amount").forEach(
     function(txn){
       total += parseFloat(txn.amount);
     });
@@ -132,7 +133,7 @@ Template.main.isAdminMode = function() {
 }
 
 Template.main.categories = function () {
-  return Categories.find({userId: getUserId()}, {sort: {name: 1}});
+  return Categories.find();
 };
 
 Template.main.getCategory = function(catId){
@@ -142,12 +143,12 @@ Template.main.getCategory = function(catId){
 }
 
 Template.main.transactions = function() {
-  return Transactions.find({userId: getUserId()}, {sort: {timestamp: -1}});
+  return Transactions.find({}, {sort: {timestamp: -1}});
 }
 
 Template.main.catTotal = function(catId){
   var total = 0;
-  Transactions.find({userId: getUserId(), catId: catId}, "amount").forEach(
+  Transactions.find({catId: catId}, "amount").forEach(
     function(txn){
       total += parseFloat(txn.amount);
     });
@@ -167,13 +168,8 @@ Template.main.events({
     Session.set('isAdminMode', el.is(':checked'));
   },
   'click button.delete': function(e){
-    var dbid = $(e.target).attr('dbid');
-    Categories.remove(dbid);
-    Transactions.find({catId: dbid}).forEach(
-      function(txn){
-        Transactions.remove(txn._id);
-      }
-      );
+    var catId = $(e.target).attr('dbid');
+    Meteor.call("deleteUserCategory", catId);
   },
   'click button.add': function(e){
     var catId = $(e.target).attr('dbid');
@@ -184,12 +180,7 @@ Template.main.events({
       return;
     }
     el.val("");
-    Transactions.insert({
-      userId: getUserId(),
-      catId: catId,
-      amount: amount,
-      timestamp: now().getTime()
-    });
+    Meteor.call("createUserTransaction", catId, amount);
   },
   'click button.spend': function(e){
     var catId = $(e.target).attr('dbid');
@@ -200,12 +191,7 @@ Template.main.events({
       return;
     }
     el.val("");
-    Transactions.insert({
-      userId: getUserId(),
-      catId: catId,
-      amount: amount * -1,
-      timestamp: now().getTime()
-    });
+    Meteor.call("createUserTransaction", catId, amount * -1);
   },
   'click button#add_new_category': function () {
     var el = $("#new_category");
@@ -215,9 +201,6 @@ Template.main.events({
       return;
     }
     el.val("");
-    Categories.insert({
-      userId: getUserId(),
-      name: name
-    });
+    Meteor.call("createUserCategory", name);
   },
 });
