@@ -3,16 +3,6 @@ Meteor.subscribe("categories");
 Meteor.subscribe("transactions");
 
 Session.setDefault('isAdminMode', false);
-var deving = false;
-deving = true;
-
-// Some helper functions
-function getUserId(){
-  if (deving) return "TEMP_FIX";
-  var user = Meteor.user();
-  if (user)
-    return user._id;
-}
 
 function now(){
     return (new Date);
@@ -121,7 +111,6 @@ Template.main.daysLeftInPeriod = function() {
 }
 
 Template.main.authenticated = function () {
-  if (deving) return true;
   if (Meteor.user())
     return true;
   else

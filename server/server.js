@@ -2,20 +2,16 @@ Meteor.startup(function () {
     // code to run on server at startup
 });
 
-var deving = false;
-deving = true;
-
 function uid(){
-    if (deving) return "TEMP_FIX";
     var user = Meteor.user();
     if (user)
         return user._id;
     }
 
 Meteor.publish(
-    "categories", function(){return Categories.find({userId: uid()});});
+    "categories", function(){return Categories.find({userId: this.userId});});
 Meteor.publish(
-    "transactions", function(){return Transactions.find({userId: uid()});});
+    "transactions", function(){return Transactions.find({userId: this.userId});});
 
 Meteor.methods({
     createUserCategory: function(name){
