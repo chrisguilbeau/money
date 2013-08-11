@@ -7,6 +7,20 @@ hr{
 	border: none;
 }
 
+.loader{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white url(/loader.gif) center center no-repeat;
+    z-index: 1000;
+}
+
+.main{
+    display: none;
+    }
+
 .progress-out{
 	border: 0.2em solid #ddd;
 	background-color: #ddd;

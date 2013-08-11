@@ -5,9 +5,12 @@
 </head>
 
 <body>
-  {{> main}}
-  <hr>
-  {{loginButtons}}
+  <div class='loader'></div>
+  <div class='main'>
+    {{> main}}
+    <hr>
+    {{loginButtons}}
+  </div>
 </body>
 
 <template name="main">
@@ -29,7 +32,7 @@
             </div>
           {{/if}}
             <div class="cell">
-              <input type="text" pattern="[0-9]*" dbid="{{_id}}" placeholder="{{name}} ${{catTotal _id}}" />
+              <input type="text" pattern="[0-9]*" dbid="{{_id}}" placeholder="{{name}} ${{catTotal _id}}" balance="{{catTotal _id}}"/>
             </div>
           {{#if isAdminMode}}
             <div class="cell tight">

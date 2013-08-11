@@ -1,6 +1,12 @@
 // subscriptions
 Meteor.subscribe("categories");
-Meteor.subscribe("transactions");
+Meteor.subscribe(
+    "transactions",
+    function onComplete(){
+        $('.loader, .main').toggle();
+
+        }
+    );
 
 Session.setDefault('isAdminMode', false);
 
@@ -122,7 +128,7 @@ Template.main.isAdminMode = function() {
 }
 
 Template.main.categories = function () {
-  return Categories.find();
+  return Categories.find({}, {sort: {name: 1}});
 };
 
 Template.main.getCategory = function(catId){
@@ -175,6 +181,11 @@ Template.main.events({
     var catId = $(e.target).attr('dbid');
     var el = $("input[dbid=" + catId + "]");
     var amount = el.val();
+    var balance = el.attr('balance');
+    if (balance - amount < 0){
+        alert("You can never go negative! NEVER!");
+        return;
+        }
     if (!$.isNumeric(amount)){
       alert("it's gotta be a number!");
       return;
