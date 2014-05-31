@@ -1,0 +1,36 @@
+*{
+    font-size: 12pt;
+}
+#login{
+    padding: 0.2em;
+}
+
+.transaction:nth-child(odd){
+    background-color: #f5f5f5;
+}
+
+.transaction .amount{
+    width:4em;
+    padding: 0.5em;
+}
+
+.transaction .date{
+    color: #bbb;
+    padding: 0.5em;
+}
+
+.positive .amount{
+    color: #216c2a;
+}
+
+.negative .amount{
+    color: firebrick;
+}
+
+.toggle.hide,.admincontrol{
+    display: none;
+}
+
+input[type="text"], button[type="button"]{
+    margin: 0.2em;
+}

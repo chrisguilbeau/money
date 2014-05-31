@@ -14,23 +14,34 @@ Meteor.publish(
     "transactions", function(){return Transactions.find({userId: this.userId});});
 
 Meteor.methods({
-    createUserCategory: function(name){
+    createCategory: function(name){
+        console.log(name);
+        console.log('i got called');
         Categories.insert({
             userId: uid(),
             name: name
             });
         return 0;
         },
-    createUserTransaction: function(catId, amount){
+    createTransaction: function(catId, amount, catName){
+        console.log('trans');
+        var timestamp = Date.now();
+        var d = new Date(timestamp);
+        var parts = d.toDateString().split(' ');
+        var date = [parts[0], parts[1], parts[2]].join(' ');
         Transactions.insert({
             userId: uid(),
             catId: catId,
+            catName: catName,
             amount: amount,
-            timestamp: (new Date).getTime()
+            timestamp: timestamp
             });
         },
-    deleteUserCategory: function(catId){
+    deleteCategory: function(catId){
         Categories.remove({userId: uid(), _id: catId});
         Transactions.remove({userId: uid(), catId: catId})
+        },
+    deleteTransaction: function(dbid){
+        Transactions.remove({userId: uid(), _id: dbid})
         }
     });

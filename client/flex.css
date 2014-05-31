@@ -1,0 +1,48 @@
+.flex-row, .flex-col{
+        display: flex;
+        flex-basis: auto;
+        flex-grow: 1;
+        flex-shrink: 0;
+}
+
+.flex-row{
+        flex-flow: row;
+}
+
+.flex-row.center{
+        align-items: center;
+}
+
+.flex-col{
+        flex-flow: column;
+}
+
+.flex-row.wrap{
+    flex-wrap: wrap;
+}
+
+.flex-row > *, .flex-col > *{
+    flex-basis: auto;
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+.center{
+    align-items: center;
+}
+
+.tight{
+    flex-grow: 0;
+}
+
+.container{
+    position: relative;
+}
+
+.container > *{
+    position: absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+}

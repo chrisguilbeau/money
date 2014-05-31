@@ -1,206 +1,141 @@
 // subscriptions
 Meteor.subscribe("categories");
-Meteor.subscribe(
-    "transactions",
+Meteor.subscribe("transactions",
     function onComplete(){
-        $('.loader, .main').toggle();
-
+        // $('.loader, .main').toggle();
         }
     );
 
 Session.setDefault('isAdminMode', false);
 
-function now(){
-    return (new Date);
-}
-
-function thisMonth(){
-    return now().getMonth();
-}
-
-function nextMonth(){
-    var tm = thisMonth();
-    if (tm == 11)
-        return 0
-    else
-        return tm + 1;
-}
-
-function thisYear(){
-    return now().getFullYear();
-}
-
-function monthStart(){
-    return (new Date(thisYear(), thisMonth(), 0, 0, 0, 0, 0));
-}
-
-function monthEnd(){
-    var y = thisYear();
-    var nm = nextMonth();
-    if (nm == 0)
-        y = y + 1;
-    return (new Date(y, nm, 0, 0, 0, 0, 0));
-}
-
-function secondsInMonth(){
-    return monthEnd().getTime() - monthStart().getTime();
-}
-
-function secondsInPeriod(periods){
-    return secondsInMonth() / periods;
-}
-
-function secondsElapsed(){
-    return now().getTime() - monthStart().getTime();
-}
-
-function secondsElapsedInPeriod(periods){
-    return secondsElapsed() % secondsInPeriod(periods);
-}
-
-function percentPeriodElapsed(periods){
-    return Math.round((secondsElapsedInPeriod(periods) / secondsInPeriod(periods)) * 100);
-}
-
-function periodsElapsed(periods){
-  return Math.floor(secondsElapsed() / secondsInPeriod(periods));
-}
-
-function startOfCurrentPeriod(periods){
-  return monthStart().getTime() + secondsInPeriod(periods) * periodsElapsed(periods);
-}
-
-// Setup templates
-Template.main.percentSpent = function(catId) {
-  var socp = startOfCurrentPeriod(2);
-  var balanceAtStart = 0;
-  var depositsSinceStart = 0;
-  var withdrawalsSinceStart = 0;
-  var params = {catId: catId};
-  Transactions.find(params, {timestamp: {$ltw: socp}}).forEach(
-    function(txn){
-      balanceAtStart += parseFloat(txn.amount);
+isAuthenticated = function(){
+    if (Meteor.user()){
+        return true;
     }
-    );
-  Transactions.find(params, {timestamp: {$gt: socp}}).forEach(
-    function(txn){
-      var amount = parseFloat(txn.amount);
-      if (amount <=0)
-        withdrawalsSinceStart += amount;
-      else
-        depositsSinceStart += amount;
+    else{
+        return false;
     }
-    );
-  var totalPositive = balanceAtStart + depositsSinceStart;
-  if (totalPositive == 0)
-    return 100
-  else
-    return 100 - Math.round((Math.abs(withdrawalsSinceStart) / totalPositive) * 100);
 }
 
-Template.main.percentPeriodElapsed = function() {
-  return percentPeriodElapsed(2);
+showAdmin = function(){
+    return (isAuthenticated() && Session.get('isAdminMode'));
 }
 
-Template.main.totalLeftForPeriod = function() {
-  var total = 0;
-  Transactions.find({}, "amount").forEach(
-    function(txn){
-      total += parseFloat(txn.amount);
-    });
-  return total;
-}
+Template.admin.isAuthenticated = isAuthenticated;
+Template.admin.showAdmin = showAdmin;
+Template.transactions.showAdmin = showAdmin;
+Template.categories.showAdmin = showAdmin;
 
-Template.main.daysLeftInPeriod = function() {
-  var msInADay = 24 * 60 * 60 * 1000;
-  return Math.round((secondsInPeriod(2) - secondsElapsedInPeriod(2)) / msInADay);
-}
 
-Template.main.authenticated = function () {
-  if (Meteor.user())
-    return true;
-  else
-    return false;
-};
+// Template.main.isAdminModeMode = function() {
+//   return Session.get('isAdminModeMode');
+// }
 
-Template.main.isAdminMode = function() {
-  return Session.get('isAdminMode');
-}
-
-Template.main.categories = function () {
+Template.categories.categories = function () {
   return Categories.find({}, {sort: {name: 1}});
-};
-
-Template.main.getCategory = function(catId){
-  var cat = Categories.findOne({_id: catId});
-  if (cat)
-    return cat.name;
 }
 
-Template.main.transactions = function() {
+Template.transactions.transactions = function() {
   return Transactions.find({}, {sort: {timestamp: -1}});
 }
 
-Template.main.catTotal = function(catId){
-  var total = 0;
-  Transactions.find({catId: catId}, "amount").forEach(
-    function(txn){
-      total += parseFloat(txn.amount);
-    });
-  return total;
+Template.transactions.moneyfy = function(i){
+    var iAbs = Math.abs(i);
+    return '$' + iAbs.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-Template.main.formatTime = function(timestamp){
-  var d = new Date(timestamp);
-  var parts = d.toDateString().split(" ");
-  return parts[0];
+function getTime(date) {
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0'+minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
 }
 
-// Handle the events
-Template.main.events({
-  'change input#toggle_admin': function(e){
-    var el = $(e.target);
-    Session.set('isAdminMode', el.is(':checked'));
-  },
-  'click button.delete': function(e){
-    var catId = $(e.target).attr('dbid');
-    Meteor.call("deleteUserCategory", catId);
-  },
-  'click button.add': function(e){
-    var catId = $(e.target).attr('dbid');
-    var el = $("input[dbid=" + catId + "]");
-    var amount = el.val();
-    if (!$.isNumeric(amount)){
-      alert("it's gotta be a number!");
-      return;
-    }
-    el.val("");
-    Meteor.call("createUserTransaction", catId, amount);
-  },
-  'click button.spend': function(e){
-    var catId = $(e.target).attr('dbid');
-    var el = $("input[dbid=" + catId + "]");
-    var amount = el.val();
-    var balance = el.attr('balance');
-    if (balance - amount < 0){
-        alert("You can never go negative! NEVER!");
-        return;
+function getDate(d){
+    var parts = d.toString().split(' ');
+    return parts.slice(0, 3).join(' ');
+}
+
+Template.transactions.dateify = function(timestamp){
+    var d = new Date(timestamp);
+    var time = getTime(d);
+    var date = getDate(d);
+    return [date, time].join(' ')
+}
+
+Template.transactions.classify = function(amount){
+    if (amount < 0)
+        return 'negative';
+    else
+        return 'positive';
+}
+
+Template.transactions.events({
+    'click button.delete': function(e){
+        var button = $(e.target);
+        var txn = button.parents('.transaction');
+        Meteor.call('deleteTransaction', txn.attr('dbid'));
         }
+    });
+
+function categoryTxn(e, multiplier){
+    var button = $(e.target);
+    var textbox = button.parents('.flex-row').find('input');
+    var amount = textbox.val();
     if (!$.isNumeric(amount)){
-      alert("it's gotta be a number!");
-      return;
-    }
-    el.val("");
-    Meteor.call("createUserTransaction", catId, amount * -1);
-  },
-  'click button#add_new_category': function () {
-    var el = $("#new_category");
-    var name = el.val();
-    if (!name){
-      alert("you didn't type anything");
-      return;
-    }
-    el.val("");
-    Meteor.call("createUserCategory", name);
-  },
-});
+        alert('Amount must be a number');
+        textbox.val('');
+        textbox.focus();
+        return
+        }
+    var dbid = textbox.attr('dbid');
+    var catName = textbox.attr('catName');
+    Meteor.call('createTransaction', dbid, multiplier * amount, catName);
+    textbox.val('');
+}
+
+function categorySpend(e){
+    categoryTxn(e, -1);
+}
+
+function categoryFund(e){
+    categoryTxn(e, 1);
+}
+
+Template.categories.total = function(catId){
+    var total = 0;
+    var txns = Transactions.find({catId: catId});
+    txns.forEach(
+        function(txn){
+        total += parseFloat(txn.amount);
+        });
+    return total;
+}
+
+Template.categories.events({
+    'click button.spend': categorySpend,
+    'click button.fund': categoryFund,
+    'click button.delete': function(e){
+        var button = $(e.target);
+        var textbox = button.parents('.flex-row').find('input');
+        var dbid = textbox.attr('dbid');
+        Meteor.call('deleteCategory', dbid);
+        }
+    })
+
+Template.admin.events({
+    'click button#toggle': function(e){
+        Session.set('isAdminMode', !Session.get('isAdminMode'));
+        },
+    'click button#catAdd': function(e){
+        var button = $(e.target);
+        var textbox = button.prev('input');
+        var category = textbox.val();
+        Meteor.call('createCategory', category);
+        textbox.val('');
+        }
+    });

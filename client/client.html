@@ -1,0 +1,53 @@
+<head>
+    <title>Money 0.2</title>
+    <meta name="viewport" content="width=770, user-scalable=no">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+</head>
+
+<body>
+    <div id='main' class='flex-col'>
+        <div id='categories' class='flex-col'>{{> categories}}</div>
+        <div id='transactions'>{{> transactions}}</div>
+        <div id='admin' class='flex-col'>{{> admin}}</div>
+        <div id='login'>{{> loginButtons}}</div>
+    </div>
+</body>
+
+<template name='categories'>
+    {{#each categories}}
+        <div class='flex-row center'>
+            <input type='text' dbid='{{_id}}' catName={{name}}
+                placeholder='{{name}} ${{total _id}}' />
+            <button type='button' class='btn spend tight'>spend</button>
+            {{#if showAdmin}}
+            <button type='button' class='btn btn-success fund tight'>fund</button>
+            <button type='button' class='btn btn-danger delete tight'>delete</button>
+            {{/if}}
+        </div>
+    {{/each}}
+</template>
+
+<template name='transactions'>
+    {{#each transactions}}
+    <div dbid='{{_id}}' class='transaction flex-row center {{classify amount}}'>
+        <div class='amount tight'>{{moneyfy amount}}</div>
+        <div class='category'>{{catName}}</div>
+        <div class='date tight'>{{dateify timestamp}}</div>
+        {{#if showAdmin}}
+        <button type='button' class='btn btn-danger delete tight'>delete</button>
+        {{/if}}
+    </div>
+    {{/each}}
+</template>
+
+<template name='admin'>
+    {{#if showAdmin}}
+    <div class='flex-row'>
+        <input type='text' placeholder='New Category'/>
+        <button type='button' id='catAdd' class='btn tight'>Add</button>
+    </div>
+    {{/if}}
+    {{#if isAuthenticated}}
+    <button type='button' class='btn' id='toggle'>Toggle Admin Mode</button>
+    {{/if}}
+</template>
