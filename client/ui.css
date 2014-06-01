@@ -1,0 +1,43 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700);
+
+*,button,input{
+    font-family: Open Sans;
+    font-size: 12pt;
+    font-weight: normal;
+}
+
+body, html{
+    background-color: #efeff4;
+}
+
+button[type='button'], input[type='text']{
+    line-height:1.5em;
+    border: 0;
+    margin: 0.1em;;
+    padding:1em;
+    padding-top:0.4em;
+    padding-bottom:0.6em;
+    border-radius: 0.2em;
+    outline:none;
+}
+
+button[type='button']{
+    background-color: #6cb8f3;
+    color: white;
+    /* background-color: #53636f; */
+    /* color: white; */
+}
+
+button.btn-success{
+    background-color: #67af56;
+}
+
+button.btn-danger{
+    background-color: #fc685d;
+}
+
+input[type='text']{
+    border:None;
+    padding-left:0.3em;
+    /* background-color: #e6e6e7; */
+}

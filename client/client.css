@@ -1,5 +1,6 @@
 *, input[type='text']{
-    font-size: 15pt;
+    font-size: 12pt;
+    font-family: Helvetica, Arial, San Serif;
 }
 #login{
     padding: 0.2em;
@@ -9,9 +10,35 @@ body, html{
     margin:0;
     padding:0;
 }
+#admin{
+    background-color: white;
+    padding: 0.2em;
+    border: 0.1em solid #ddd;
+    border-left:0;
+    border-right:0;
+}
+
+#categories{
+    margin-bottom: 1em;
+    background-color: white;
+}
+
+#transactions{
+    background-color: white;
+    border: 0.1em solid #ddd;
+    border-left: 0;
+    border-right: 0;
+    margin-bottom: 1em;
+}
+
+.category-row{
+    padding: 0.2em;
+    border-bottom: 0.1em solid #ddd;
+}
 
 .transaction:nth-child(odd){
     background-color: #f5f5f5;
+    background-color: #f1f9e6;
 }
 
 .transaction .amount{
@@ -21,6 +48,7 @@ body, html{
 
 .transaction .date{
     color: #bbb;
+    color: #98ae7e;
     padding: 0.5em;
 }
 

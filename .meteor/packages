@@ -7,6 +7,5 @@ standard-app-packages
 insecure
 accounts-ui
 accounts-twitter
-bootstrap
 accounts-facebook
 accounts-google

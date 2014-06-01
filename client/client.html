@@ -1,6 +1,6 @@
 <head>
     <title>Money 0.2</title>
-    <meta name="viewport" content="width=500, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
 
@@ -15,7 +15,7 @@
 
 <template name='categories'>
     {{#each categories}}
-        <div class='flex-row center'>
+        <div class='category-row flex-row center'>
             <input type='text' dbid='{{_id}}' catName='{{name}}'
                 pattern='[0-9]*' placeholder='{{name}} ${{total _id}}' />
             <button type='button' class='btn spend tight'>spend</button>
