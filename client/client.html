@@ -17,7 +17,7 @@
     {{#each categories}}
         <div class='flex-row center'>
             <input type='text' dbid='{{_id}}' catName='{{name}}'
-                pattern='[0-9]' placeholder='{{name}} ${{total _id}}' />
+                pattern='[0-9]*' placeholder='{{name}} ${{total _id}}' />
             <button type='button' class='btn spend tight'>spend</button>
             {{#if showAdmin}}
             <button type='button' class='btn btn-success fund tight'>fund</button>
