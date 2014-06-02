@@ -117,6 +117,10 @@ Template.categories.total = function(catId){
 }
 
 Template.categories.events({
+    'submit': function(e){
+        $(e.target).next('button.spend').click();
+        e.preventDefault();
+        },
     'click button.spend': categorySpend,
     'click button.fund': categoryFund,
     'click button.delete': function(e){
